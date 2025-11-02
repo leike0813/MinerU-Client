@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg*
+pip-wheel-metadata/
+
+# Nuitka build artifacts
+*.build/
+*.dist/
+nuitka-crash-report.xml
+
+# Logs and runtime data
+logs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE / editor directories
+.idea/
+.vscode/
+
+# Test & coverage
+.pytest_cache/
+.coverage*
+coverage.xml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Configuration and history files generated at runtime
+config.json
+key.key
+.mineru_history.json

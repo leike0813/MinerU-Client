@@ -1,0 +1,8 @@
+# Core runtime dependencies
+PySide6>=6.7
+requests>=2.31
+pydantic>=1.10
+cryptography>=41.0
+
+# Testing
+pytest>=7.4
