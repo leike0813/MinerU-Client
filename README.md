@@ -58,6 +58,7 @@ python main.py
 | `app.py`               | 应用初始化逻辑，挂载主题与主窗口。                           |
 | `core/`                | 核心数据结构、配置模型与加密配置管理器。                     |
 | `services/`            | 与 API、日志、任务调度相关的服务层模块。                     |
+| `docs/`                | 项目文档（`API_DOC.md`、`ARCHITECTURE.md` 等）。              |
 | `ui/`                  | 主界面、主题样式与 UI 相关定义。                             |
 | `widgets/`             | 自定义控件：文件队列、日志视图、状态摘要、任务历史等。       |
 | `tests/`               | 配置组件的单元测试示例。                                     |
@@ -69,32 +70,67 @@ python main.py
 ## 🔄 主要工作流程
 
 1. **添加文件**：拖拽或点击“添加文件”，文件会显示在“文件选择”区。
-2. **设置解析参数**：在“设置”区配置语言、OCR、重试等选项。
-3. **选择输出目录**：确保该目录存在；程序会在下方按照 `批次/文件名` 生成结果。
-4. **启动解析**：点击“开始解析”，应用会自动执行：
-   - 获取上传 URL
-   - 上传 PDF
-   - 轮询解析结果
-   - 下载并解压结果 ZIP
-5. **查看进度**：
-   - “任务历史”支持重新轮询、重新下载以及重新上传提示。
-   - “日志”记录详细过程，可导出分析。
+2. **配置选项**：输入/编辑 API Key、输出目录、解析模板等参数，支持保存配置。
+3. **启动批次**：点击“开始解析”后，任务交由后台线程执行，实时同步状态到界面。
+4. **查看结果**：完成后可直接打开输出目录或下载的 Markdown 摘要。
+5. **历史记录恢复**：可在历史标签页重启轮询或重新下载失败的批次结果。
 
 ---
 
-## 🤝 贡献指南
+## 🧪 测试说明
 
-欢迎通过以下方式参与项目：
+- 使用 `pytest` 运行单元测试：
 
-1. Fork 仓库并创建功能分支。
-2. 提交 PR 时请附带必要的测试与文档更新。
-3. 若有重大需求或问题，欢迎先通过 Issue 讨论。
+  ```bash
+  pytest
+  ```
+
+- 如需模拟 API 通信，可在测试中使用 `responses` 或自建 Mock 服务。
 
 ---
 
-## 📜 许可证
+## 📦 发布与编译建议（Nuitka）
 
-项目为内部学习与演示用途，发布前请根据实际情况补充许可证信息。如需对外发布，请确认所有依赖和 API 使用条款。
+推荐使用 Nuitka 进行编译以获得更佳性能和体积：
+
+```bash
+python -m nuitka main.py \
+  --standalone \
+  --enable-plugin=pyside6 \
+  --include-data-dir=ui=ui \
+  --include-data-dir=widgets=widgets \
+  --include-data-dir=core=core \
+  --include-data-files=docs/API_DOC.md=docs/API_DOC.md \
+  --include-data-files=docs/ARCHITECTURE.md=docs/ARCHITECTURE.md \
+  --follow-imports \
+  --nofollow-import-to=tests \
+  --include-qt-plugins=sensible,styles \
+  --windows-console-mode=disable \
+  --output-dir=dist \
+  --remove-output
+```
+
+### Windows 编译环境说明
+
+- MinGW 方案：在 MSYS2 UCRT64 shell 中安装 `mingw-w64-ucrt-x86_64-toolchain` 与 `mingw-w64-ucrt-x86_64-zlib` 等依赖后再构建。
+- MSVC 方案（推荐）：使用 VS 2022 Build Tools（x64 Native Tools 命令提示符），搭配下方 PBS 独立 Python 环境可最大化隔离系统差异。
+
+## 🧱 使用 python-build-standalone（可选）
+
+若希望构建与系统 Python/Conda 解耦，可使用 `python-build-standalone`（PBS）+ MSVC 搭建独立编译环境：
+
+1. 下载 PBS 发行包（例：`cpython-3.11.x-windows-msvc-shared-full`）并解压到 `C:\\tools\\python311-standalone`。
+2. 安装 VS 2022 Build Tools（x64 Native Tools 命令提示符）。
+3. 在 PBS Python 中安装依赖：
+   ```bat
+   set PYTHON_HOME=C:\\tools\\python311-standalone
+   %PYTHON_HOME%\\python.exe -m pip install -U pip wheel
+   %PYTHON_HOME%\\python.exe -m pip install nuitka ordered-set zstandard
+   %PYTHON_HOME%\\python.exe -m pip install PySide6 requests pydantic cryptography
+   ```
+4. 用 PBS Python 执行上方 Nuitka 构建命令（建议保留 `--windows-console-mode=disable`）。
+
+更多细节与排错建议请参考 `docs/ARCHITECTURE.md` 的“与编译/发布相关的注意事项”。
 
 ---
 
