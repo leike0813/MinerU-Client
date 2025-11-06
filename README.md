@@ -135,3 +135,8 @@ python -m nuitka main.py \
 ---
 
 如有疑问或建议，欢迎提交 Issue 或直接联系维护者。祝使用愉快！🙏
+
+# 感谢
+
+- 强大的PDF解析模型[MinerU](https://github.com/opendatalab/MinerU)
+- 感谢 MinerU 团队提供的免费 [API](https://mineru.net/) 支持。
